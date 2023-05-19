@@ -13,6 +13,7 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
+  Button,
 } from "@chakra-ui/react";
 import { FiLogOut } from "react-icons/fi";
 import { RxDashboard } from "react-icons/rx";
@@ -48,6 +49,8 @@ export default function RDashboard() {
     "December",
   ];
   const [currentTime, setCurrentTime] = useState(date);
+  const [body, setBody] = useState({});
+
   function getCurrentTime() {
     const promise = new Promise((resolve) => {
       setTimeout(() => {
@@ -58,7 +61,11 @@ export default function RDashboard() {
   useEffect(() => {
     getCurrentTime();
   }, [currentTime]);
-
+  async function clockIn() {
+    await axios.post("http://localhost:3500/main/" + 12).then((res) => {
+      alert(res.data.message);
+    });
+  }
   return (
     <>
       <Flex w={"100vw"} h={"100vh"} justifyContent={"center"} bg={"#F0F3FB"}>
@@ -96,28 +103,33 @@ export default function RDashboard() {
                 </Flex>
                 <Flex className="detail-2">
                   <Flex className="opsi-cont">
-                    <Flex
+                    <Button
                       className="opsi"
                       bg={"green.100"}
                       borderColor={"green.200"}
                       color={"green.500"}
+                      h={"90px"}
+                      borderRadius={"20px"}
+                      onClick={clockIn}
                     >
                       {" "}
                       <Icon as={AiOutlineUserAdd} w={10} h={10} />
                       <Flex>Clock-In</Flex>
-                    </Flex>
+                    </Button>
                   </Flex>
                   <Flex className="opsi-cont">
-                    <Flex
+                    <Button
                       className="opsi"
                       bg={"orange.100"}
                       borderColor={"orange.200"}
                       color={"orange.500"}
+                      h={"90px"}
+                      borderRadius={"20px"}
                     >
                       {" "}
                       <Icon as={AiOutlineUserDelete} w={10} h={10} />
                       <Flex>Clock-Out</Flex>
-                    </Flex>
+                    </Button>
                   </Flex>
                 </Flex>
               </Flex>

@@ -8,7 +8,10 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Formik, useFormik } from "formik";
+import axios from "axios";
 export default function RRegister() {
+  const nav = useNavigate();
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -17,8 +20,39 @@ export default function RRegister() {
       name: "",
       company: "",
     },
+    onSubmit: async () => {
+      const { email, address, password, name, company } = formik.values;
+      const account = {
+        email,
+        password,
+        fullname: name,
+        company_id: company,
+        address,
+      };
+      console.log(account);
+      const checkemail = await axios
+        .get("http://localhost:3500/users/email", {
+          params: { Email: account.email },
+        })
+        .then((res) => {
+          if (res.data) {
+            // console.log(res.data);
+            return true;
+          } else {
+            // console.log(res.data);
+            return false;
+          }
+        });
+      if (checkemail) {
+        alert("email has been used");
+      } else {
+        await axios.post("http://localhost:3500/users", account).then(() => {
+          alert("account created succesfully");
+          nav("/rlogin");
+        });
+      }
+    },
   });
-  const navigate = useNavigate();
   function inputHandler(event) {
     const { value, id } = event.target;
     console.log(value);
@@ -69,7 +103,9 @@ export default function RRegister() {
             </FormControl>
           </Flex>
           <Flex className="end">
-            <Button colorScheme="cyan">Register</Button>
+            <Button colorScheme="cyan" onClick={formik.handleSubmit}>
+              Register
+            </Button>
             <span className="center">or</span>
             <Button colorScheme="gray">Login</Button>
           </Flex>
